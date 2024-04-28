@@ -1,0 +1,27 @@
+import 'dart:io';
+
+void main() {
+  print("Enter two integers (comma-separated) to find LCM and GCD: ");
+  List<int> inputNumbers = stdin.readLineSync()!.split(',').map(int.parse).toList();
+  print("LCM: ${calculateLCM(inputNumbers[0], inputNumbers[1])}");
+  print("GCD: ${calculateGCD(inputNumbers[0], inputNumbers[1])}");
+}
+
+int calculateLCM(int a, int b) {
+  int greater = a > b ? a : b;
+  while (true) {
+    if (greater % a == 0 && greater % b == 0) {
+      return greater;
+    }
+    greater++;
+  }
+}
+
+int calculateGCD(int a, int b) {
+  while (b != 0) {
+    int temp = b;
+    b = a % b;
+    a = temp;
+  }
+  return a;
+}
