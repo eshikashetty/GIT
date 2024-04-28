@@ -1,0 +1,345 @@
+//a.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <h1>E-commerce App</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="homeLink">Home</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#" id="showCart">Cart<span id="cartCount"></span></a></li>
+                <li><a href="#">Account</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Product Cards -->
+        <div class="product-card">
+            <img src="product1.png" alt="Product 1">
+            <h3>Product 1</h3>
+            <p class="price">$10.99</p>
+            <div class="add-to-cart">
+                <button class="add-to-cart-btn" data-product="product1.png">Add to Cart</button>
+                <span class="item-count">0</span>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <img src="product2.jpeg" alt="Product 2">
+            <h3>Product 2</h3>
+            <p class="price">$19.99</p>
+            <div class="add-to-cart">
+                <button class="add-to-cart-btn" data-product="product2.jpeg">Add to Cart</button>
+                <span class="item-count">0</span>
+            </div>
+        </div>
+
+        <!-- More product cards can be added here -->
+    </main>
+
+    <div class="cart-container">
+        <div class="cart">
+            <span class="close-cart">&times;</span>
+            <h2>Cart</h2>
+            <div class="cart-items"></div>
+            <div class="cart-total"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 E-commerce App</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
+//styles.css
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.product-card {
+    width: 300px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    main {
+        justify-content: center;
+    }
+
+    .product-card {
+        width: calc(50% - 20px);
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+
+    .product-card:last-child {
+        margin-right: 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .product-card {
+        width: calc(100% - 20px);
+        margin-right: 0;
+    }
+}
+/* Existing styles */
+
+/* New styles for the cart */
+.cart-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+
+
+/* Responsive Styles (if any) */
+.cart-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.cart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.close-cart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.cart-items {
+    margin-top: 20px;
+}
+
+.total-item {
+    margin-top: 10px;
+    font-weight: bold;
+}
+//app.js
+document.addEventListener('DOMContentLoaded', function () {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    const cartCount = document.getElementById('cartCount');
+    const cartContainer = document.querySelector('.cart-container');
+    const closeCart = document.querySelector('.close-cart');
+    const showCart = document.getElementById('showCart');
+    const homeLink = document.getElementById('homeLink');
+    const cartItems = document.querySelector('.cart-items');
+    const cartTotal = document.querySelector('.cart-total');
+
+    let cart = [];
+
+    // Add to cart button event listeners
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const product = this.getAttribute('data-product');
+            addToCart(product);
+            updateCartIcon();
+            updateItemCount(product);
+            displayCart();
+        });
+    });
+
+    // Show cart event listener
+    showCart.addEventListener('click', function () {
+        cartContainer.style.display = 'block'; // Show cart container
+        displayCart();
+    });
+
+    // Close cart event listener
+    closeCart.addEventListener('click', function () {
+        cartContainer.style.display = 'none'; // Hide cart container
+    });
+
+    // Home link event listener
+    homeLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        alert('Welcome to our website!');
+    });
+
+    // Add item to cart
+    function addToCart(product) {
+        let itemFound = false;
+        cart.forEach(item => {
+            if (item.product === product) {
+                item.count++;
+                itemFound = true;
+            }
+        });
+
+        if (!itemFound) {
+            cart.push({ product: product, count: 1 });
+        }
+
+        updateCartCount();
+    }
+
+    // Update cart icon count
+    function updateCartCount() {
+        let totalCount = 0;
+        cart.forEach(item => {
+            totalCount += item.count;
+        });
+        cartCount.textContent = totalCount;
+    }
+
+    // Update cart icon
+    function updateCartIcon() {
+        cartCount.style.display = 'inline';
+    }
+
+    // Update item count near product pictures
+    function updateItemCount(product) {
+        const itemCounts = document.querySelectorAll('.item-count');
+        itemCounts.forEach(count => {
+            if (count.previousElementSibling.getAttribute('data-product') === product) {
+                count.textContent = parseInt(count.textContent) + 1;
+            }
+        });
+    }
+
+    // Display cart
+    function displayCart() {
+        cartItems.innerHTML = '';
+        cartTotal.textContent = '';
+        let total = 0;
+        cart.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+
+            const productName = document.createElement('span');
+            productName.textContent = getProductInfo(item.product).name;
+            cartItem.appendChild(productName);
+
+            const productPrice = getProductInfo(item.product).price;
+            total += productPrice * item.count;
+
+            const price = document.createElement('span');
+            price.textContent = `$${(productPrice * item.count).toFixed(2)}`;
+            cartItem.appendChild(price);
+
+            cartItems.appendChild(cartItem);
+        });
+
+        const totalItem = document.createElement('div');
+        totalItem.classList.add('total-item');
+        totalItem.textContent = `Total: $${total.toFixed(2)}`;
+        cartTotal.appendChild(totalItem);
+    }
+
+    // Get product information (name and price)
+    function getProductInfo(product) {
+        switch (product) {
+            case 'product1.png':
+                return { name: 'Product 1', price: 10.99 };
+            case 'product2.jpeg':
+                return { name: 'Product 2', price: 19.99 };
+            // Add more cases for other products if needed
+            default:
+                return { name: 'Unknown Product', price: 0 };
+        }
+    }
+});
+//manifest.json
+{
+  "name": "Your E-commerce App",
+  "short_name": "E-commerce",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f9f9",
+  "theme_color": "#333",
+  "icons": [
+    {
+      "src": "product1.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "product2.jpeg",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
