@@ -1,0 +1,16 @@
+import 'dart:io';
+
+void main() {
+  print("Enter an integer for Fibonacci series: ");
+  int fibonacciLimit = int.parse(stdin.readLineSync()!);
+  print("Fibonacci series: ${generateFibonacciSeries(fibonacciLimit)}");
+}
+
+List<int> generateFibonacciSeries(int limit) {
+  List<int> fibonacciSeries = [1, 1];
+  while (fibonacciSeries.last + fibonacciSeries[fibonacciSeries.length - 2] <= limit) {
+    fibonacciSeries.add(
+        fibonacciSeries.last + fibonacciSeries[fibonacciSeries.length - 2]);
+  }
+  return fibonacciSeries;
+}
