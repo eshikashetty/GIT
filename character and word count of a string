@@ -1,0 +1,16 @@
+import 'dart:io';
+
+void main() {
+  print("Enter a string: ");
+  String inputString = stdin.readLineSync()!;
+  print("Character Count: ${countCharacters(inputString)}");
+  print("Word Count: ${countWords(inputString)}");
+}
+
+int countCharacters(String str) {
+  return str.length;
+}
+
+int countWords(String str) {
+  return str.split(' ').where((word) => word.isNotEmpty).length;
+}
