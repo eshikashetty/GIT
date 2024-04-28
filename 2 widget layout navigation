@@ -1,0 +1,359 @@
+//main.dart
+import 'package:flutter/material.dart';
+import 'product.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Navigation Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ProductPage(), // Starting with the ProductPage
+    );
+  }
+}
+
+//product.dart
+import 'package:flutter/material.dart';
+import 'order.dart';
+
+class ProductPage extends StatefulWidget {
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  String productName = '';
+  double price = 0.0;
+  String? productType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Product Details'),
+        actions: [
+          buildDropdownMenu(),
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              decoration: InputDecoration(labelText: 'Product Name'),
+              onChanged: (value) {
+                setState(() {
+                  productName = value;
+                });
+              },
+            ),
+            SizedBox(height: 16),
+            TextField(
+              decoration: InputDecoration(labelText: 'Price'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  price = double.parse(value);
+                });
+              },
+            ),
+            SizedBox(height: 16),
+            Text('Select Product Type:'),
+            Row(
+              children: [
+                Radio(
+                  value: 'Electronic',
+                  groupValue: productType,
+                  onChanged: (value) {
+                    setState(() {
+                      productType = value;
+                    });
+                  },
+                ),
+                Text('Electronic'),
+                Radio(
+                  value: 'Furniture',
+                  groupValue: productType,
+                  onChanged: (value) {
+                    setState(() {
+                      productType = value;
+                    });
+                  },
+                ),
+                Text('Furniture'),
+                Radio(
+                  value: 'Kitchenware',
+                  groupValue: productType,
+                  onChanged: (value) {
+                    setState(() {
+                      productType = value;
+                    });
+                  },
+                ),
+                Text('Kitchenware'),
+              ],
+            ),
+            Spacer(),
+            Row(
+              children: [
+                ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderPage(
+          productName: productName,
+          price: price,
+          productType: productType,
+        ),
+      ),
+    );
+  },
+  child: Text('Next'),
+),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDropdownMenu() {
+    return DropdownButton<String>(
+      onChanged: (value) {
+        switch (value) {
+          case 'Product':
+            // Add logic if needed
+            break;
+          case 'Order':
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderPage(
+                  productName: productName,
+                  price: price,
+                  productType: productType,
+                ),
+              ),
+            );
+            break;
+          // Add cases for other pages if needed
+          case 'Confirm':
+            // Add logic if needed
+          break;
+        }
+      },
+      items: [
+        DropdownMenuItem(
+          value: 'Product',
+          child: Text('Product'),
+        ),
+        DropdownMenuItem(
+          value: 'Order',
+          child: Text('Order'),
+        ),
+        // Add more DropdownMenuItem items for other pages if needed
+      ],
+    );
+  }
+}
+
+//order.dart
+import 'package:flutter/material.dart';
+import 'confirm.dart';
+
+class OrderPage extends StatefulWidget {
+  final String productName;
+  final double price;
+  final String? productType;
+
+  OrderPage({
+    required this.productName,
+    required this.price,
+    required this.productType,
+  });
+
+  @override
+  _OrderPageState createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  int quantity = 0;
+  DateTime? orderDate;
+  String address = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Order Details'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Product Name: ${widget.productName}'),
+            Text('Price: ${widget.price}'),
+            Text('Product Type: ${widget.productType ?? 'Not selected'}'),
+            TextField(
+              decoration: InputDecoration(labelText: 'Quantity'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  quantity = int.parse(value);
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            Text('Select Order Date:'),
+            ElevatedButton(
+              onPressed: () async {
+                DateTime? selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: orderDate ?? DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                );
+
+                if (selectedDate != null) {
+                  setState(() {
+                    orderDate = selectedDate;
+                  });
+                }
+              },
+              child: Text('Pick Date'),
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Address'),
+              onChanged: (value) {
+                setState(() {
+                  address = value;
+                });
+              },
+            ),
+            Spacer(),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Back'),
+                ),
+                SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConfirmPage(
+                          productName: widget.productName,
+                          price: widget.price,
+                          productType: widget.productType,
+                          quantity: quantity,
+                          orderDate: orderDate,
+                          address: address,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//confirm.dart
+import 'package:flutter/material.dart';
+
+class ConfirmPage extends StatelessWidget {
+  final String productName;
+  final double price;
+  final String? productType;
+  final int quantity;
+  final DateTime? orderDate;
+  final String address;
+
+  ConfirmPage({
+    required this.productName,
+    required this.price,
+    required this.productType,
+    required this.quantity,
+    required this.orderDate,
+    required this.address,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Confirm Order'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Product Name: $productName'),
+            Text('Price: $price'),
+            Text('Product Type: ${productType ?? 'Not selected'}'),
+            Text('Quantity: $quantity'),
+            Text('Order Date: ${orderDate?.toString() ?? 'Not selected'}'),
+            Text('Address: $address'),
+            Spacer(),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                  child: Text('Back to Home'),
+                ),
+                SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    // Perform order submission logic
+                    // Display success message
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Order Submitted'),
+                          content: Text('Your order has been successfully submitted.'),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.popUntil(context, ModalRoute.withName('/'));
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text('Submit Order'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
