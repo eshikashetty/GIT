@@ -1,0 +1,35 @@
+import 'dart:io';
+
+void main() {
+  print("Enter a list of integers (comma-separated): ");
+  String? input = stdin.readLineSync();
+  if (input != null && input.isNotEmpty) {
+    List<int> numbers = input.split(',').map(int.tryParse).whereType<int>().toList();
+    if (numbers.isNotEmpty) {
+      print("Even Numbers: ${getEvenNumbers(numbers)}");
+    } else {
+      print("No valid integers provided.");
+    }
+  } else {
+    print("No input provided.");
+  }
+}
+
+List<int> getEvenNumbers(List<int> numbers) {
+  return numbers.where((number) => number % 2 == 0).toList();
+}
+
+//variation
+import 'dart:io';
+
+void main() {
+  print("Enter a list of integers (comma-separated): ");
+  List<int> numbers = stdin.readLineSync()!.split(',').map(int.parse).toList();
+  print("Even Numbers: ${getEvenNumbers(numbers)}");
+}
+
+List<int> getEvenNumbers(List<int> numbers) {
+  return numbers.where((number) => number % 2 == 0).toList();
+}
+
+// dart your_file.dart 34 56 78 42 90
