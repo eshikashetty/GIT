@@ -1,0 +1,26 @@
+import 'dart:io';
+
+bool isPalindrome(String str) {
+  int length = str.length;
+  for (int i = 0; i < length ~/ 2; i++) {
+    if (str[i] != str[length - i - 1]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void main() {
+  print("Enter a string: ");
+  String? inputString = stdin.readLineSync();
+
+  if (inputString != null) {
+    if (isPalindrome(inputString)) {
+      print("$inputString is a palindrome.");
+    } else {
+      print("$inputString is not a palindrome.");
+    }
+  } else {
+    print("Invalid input. Please enter a valid string.");
+  }
+}
