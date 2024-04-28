@@ -1,0 +1,170 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(LoginApp());
+}
+
+class LoginApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Login Page'),
+        ),
+        body: LoginPage(),
+      ),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State
+    with SingleTickerProviderStateMixin {
+  late TextEditingController emailController;
+  late TextEditingController usernameController;
+  late TextEditingController passwordController;
+  bool rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              'Login',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              // Remove inputFormatter for email validation
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: TextField(
+              controller: usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Checkbox(
+                value: rememberMe,
+                onChanged: (value) {
+                  setState(() {
+                    rememberMe = value!;
+                  });
+                },
+              ),
+              Text('Remember me'),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _login();
+            },
+            child: Text('Login'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _login() {
+    // Check if email, username, and password are not empty
+    if (emailController.text.isEmpty ||
+        usernameController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+      _showMessage('Please fill in all fields.');
+      return;
+    }
+
+    // Check if the entered email is valid
+    if (!_isValidEmail(emailController.text)) {
+      _showMessage('Please enter a valid email address.');
+      return;
+    }
+
+    // Add your login logic here, for example, check against hardcoded values
+    // In a real-world scenario, you would call an API to authenticate
+    if (usernameController.text == 'user' &&
+        passwordController.text == 'password') {
+      _showMessage('Login successful!');
+    } else {
+      _showMessage('Invalid username or password.');
+    }
+  }
+
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  void _showMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Login'),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
