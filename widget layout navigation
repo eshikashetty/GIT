@@ -1,0 +1,261 @@
+//main.dart
+import 'package:flutter/material.dart';
+import 'order.dart'; // Import the Order.dart file
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: ProductPage(),
+    );
+  }
+}
+
+class ProductPage extends StatefulWidget {
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  TextEditingController productNameController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  String selectedType = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Product Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Product Name:'),
+            TextField(
+              controller: productNameController,
+            ),
+            SizedBox(height: 10),
+            Text('Price:'),
+            TextField(
+              controller: priceController,
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 10),
+            Text('Type:'),
+            Row(
+              children: [
+                Radio(
+                  value: 'electronic',
+                  groupValue: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value.toString();
+                    });
+                  },
+                ),
+                Text('Electronic'),
+                Radio(
+                  value: 'furniture',
+                  groupValue: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value.toString();
+                    });
+                  },
+                ),
+                Text('Furniture'),
+                Radio(
+                  value: 'utensils',
+                  groupValue: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value.toString();
+                    });
+                  },
+                ),
+                Text('Utensils'),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      productNameController.clear();
+                      priceController.clear();
+                      selectedType = '';
+                    });
+                  },
+                  child: Text('Clear'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OrderPage()),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//order.dart
+import 'package:flutter/material.dart';
+import 'confirmation.dart';
+
+class OrderPage extends StatefulWidget {
+  @override
+  _OrderPageState createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  TextEditingController quantityController = TextEditingController();
+  TextEditingController orderDateController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Order Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Quantity:'),
+            TextField(
+              controller: quantityController,
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 10),
+            Text('Order Date:'),
+            TextField(
+              controller: orderDateController,
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(height: 10),
+            Text('Address:'),
+            TextField(
+              controller: addressController,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Navigate back to ProductPage
+                  },
+                  child: Text('Back'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConfirmationPage(
+                          productName: 'Example Product', // Replace with actual product name
+                          price: 'Example Price', // Replace with actual price
+                          selectedType: 'Example Type', // Replace with actual type
+                          quantity: quantityController.text,
+                          orderDate: orderDateController.text,
+                          address: addressController.text,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//confirmation.dart
+import 'package:flutter/material.dart';
+
+class ConfirmationPage extends StatelessWidget {
+  final String productName;
+  final String price;
+  final String selectedType;
+  final String quantity;
+  final String orderDate;
+  final String address;
+
+  ConfirmationPage({
+    required this.productName,
+    required this.price,
+    required this.selectedType,
+    required this.quantity,
+    required this.orderDate,
+    required this.address,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Confirmation Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Product Name: $productName'),
+            SizedBox(height: 10),
+            Text('Price: $price'),
+            SizedBox(height: 10),
+            Text('Type: $selectedType'),
+            SizedBox(height: 10),
+            Text('Quantity: $quantity'),
+            SizedBox(height: 10),
+            Text('Order Date: $orderDate'),
+            SizedBox(height: 10),
+            Text('Address: $address'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Handle the submit logic here
+                // You can add your logic to send the data or perform any actions
+                // For now, let's navigate back to Page 2 (OrderPage)
+                Navigator.pop(context);
+              },
+              child: Text('Submit'),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Navigate back to OrderPage
+              },
+              child: Text('Back'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
