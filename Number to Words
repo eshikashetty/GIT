@@ -1,0 +1,53 @@
+import 'dart:io';
+
+void main() {
+  print("Enter an integer: ");
+  int inputInteger = int.parse(stdin.readLineSync()!);
+  print("Equivalent in words: ${integerToWords(inputInteger)}");
+}
+
+String integerToWords(int number) {
+  if (number == 0) {
+    return 'Zero';
+  }
+
+  // Define words for numbers 1 to 19
+  List<String> wordsBelowTwenty = [
+    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+    'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+  ];
+
+  // Define words for multiples of 10 from 20 to 90
+  List<String> wordsTens = [
+    '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+  ];
+
+  // Recursive function to convert a given number to words
+  String convertToWords(int num) {
+    if (num < 20) {
+      return wordsBelowTwenty[num];
+    } else if (num < 100) {
+      return '${wordsTens[num ~/ 10]} ${wordsBelowTwenty[num % 10]}'.trim();
+    } else if (num < 1000) {
+      if (num % 100 == 0) {
+        return '${wordsBelowTwenty[num ~/ 100]} Hundred'.trim();
+      } else {
+        return '${wordsBelowTwenty[num ~/ 100]} Hundred ${convertToWords(num % 100)}'.trim();
+      }
+    } else if (num < 10000) {
+      if (num % 1000 == 0) {
+        return '${wordsBelowTwenty[num ~/ 1000]} Thousand'.trim();
+      } else {
+        return '${wordsBelowTwenty[num ~/ 1000]} Thousand ${convertToWords(num % 1000)}'.trim();
+      }
+    } else {
+      return 'Number out of range';
+    }
+  }
+
+  if (number < 10000) {
+    return convertToWords(number);
+  } else {
+    return 'Number out of range';
+  }
+}
