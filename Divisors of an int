@@ -1,0 +1,23 @@
+import 'dart:io';
+
+void main() {
+  print("Enter an integer to find its divisors: ");
+  String userInput = stdin.readLineSync()!;
+  
+  try {
+    int inputDivisor = int.parse(userInput);
+    print("Divisors: ${getDivisors(inputDivisor)}");
+  } catch (e) {
+    print("Invalid input. Please enter a valid integer.");
+  }
+}
+
+List<int> getDivisors(int number) {
+  List<int> divisors = [];
+  for (int i = 1; i <= number; i++) {
+    if (number % i == 0) {
+      divisors.add(i);
+    }
+  }
+  return divisors;
+}
